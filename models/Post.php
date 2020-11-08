@@ -118,4 +118,63 @@
       return false;
     }
 
+    // Update Post
+    public function update() {
+      // Create Query
+      $query = 'UPDATE posts 
+        SET
+          title = :title,
+          body = :body,
+          author = :author,
+          category_id = :category_id
+        WHERE 
+          id = :id';
+
+      // Prepare stmt
+      $stmt = $this->conn->prepare($query);
+
+      // Sanitize data
+      $this->id = htmlspecialchars(strip_tags($this->id));
+      $this->title = htmlspecialchars(strip_tags($this->title));
+      $this->body = htmlspecialchars(strip_tags($this->body));
+      $this->author = htmlspecialchars(strip_tags($this->author));
+      $this->category_id = htmlspecialchars(strip_tags($this->category_id));
+      
+      // Bind Params
+      $stmt->bindParam(':id', $this->id);
+      $stmt->bindParam(':title', $this->title);
+      $stmt->bindParam(':body', $this->body);
+      $stmt->bindParam(':author', $this->author);
+      $stmt->bindParam(':category_id', $this->category_id);
+
+      // Execute Query
+      if($stmt->execute()) {
+        return true;
+      }
+
+      // Print error if somthing goes wrong
+      printf("Erro: &s.\n", $stmt->error);
+
+      return false;
+    }
+
+    public function delete() {
+      $query = 'DELETE FROM posts WHERE id = :id';
+      
+      $stmt = $this->conn->prepare($query);
+      
+
+      $this->id = htmlspecialchars(strip_tags($this->id));
+
+      $stmt->bindParam(':id', $this->id);
+
+      if($stmt->execute()){
+        return true;
+      }
+
+      printf("Error: &s.\n", $stmt->error);
+
+      return false;
+    }
+
   }
